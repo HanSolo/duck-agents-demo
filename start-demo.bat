@@ -2,6 +2,8 @@
 rem Starts the Duck agents demo on Windows. Double-click this file in Explorer.
 setlocal EnableDelayedExpansion
 cd /d "%~dp0"
+rem Image names must be lower case; GitHub names often are not, so lower-case the prefix from .env (the environment value wins over .env)
+for /f "usebackq delims=" %%i in (`powershell -NoProfile -Command "$l = Select-String -Path '.env' -Pattern '^DEMO_IMAGE_PREFIX='; if ($l) { ($l[-1].Line -replace '^DEMO_IMAGE_PREFIX=','').Trim().Trim('\"').ToLower() }"`) do set "DEMO_IMAGE_PREFIX=%%i"
 echo === Duck agents demo ===
 
 rem 1. Docker installed and running?

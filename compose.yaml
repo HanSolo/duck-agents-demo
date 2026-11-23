@@ -33,7 +33,10 @@ services:
       PHYSIOCLINIC_MCP_URL: http://duckphysicaltherapyclinic:8082/mcp
       PHYSIOCLINIC_REST_URL: http://duckphysicaltherapyclinic:8082/api
       AGENT_SECRET: ${AGENT_SECRET:-duck-agent-demo}
-      DUCK_FRAUD_AGENT: "on"
+      # Start values of the demo switches in the sidebar (admin only), set in .env: on or off
+      DUCK_ASSISTANT: ${DUCK_ASSISTANT:-on}
+      DUCK_FRAUD_AGENT: ${DUCK_FRAUD_AGENT:-on}
+      DUCK_AGENTS_TAB: ${DUCK_AGENTS_TAB:-on}
       DUCK_CONFIRM_WRITES: if-supported
     restart: unless-stopped
 

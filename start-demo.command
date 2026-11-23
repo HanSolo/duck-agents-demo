@@ -1,6 +1,9 @@
 #!/bin/bash
 # Starts the Duck agents demo on macOS. Double-click this file in Finder.
 cd "$(dirname "$0")" || exit 1
+# Image names must be lower case; GitHub names often are not, so lower-case the prefix from .env (the shell value wins over .env)
+DEMO_IMAGE_PREFIX="$(grep -E '^DEMO_IMAGE_PREFIX=' .env 2>/dev/null | tail -n 1 | cut -d= -f2- | tr -d '\r"' | tr '[:upper:]' '[:lower:]')"
+[ -n "$DEMO_IMAGE_PREFIX" ] && export DEMO_IMAGE_PREFIX || unset DEMO_IMAGE_PREFIX
 
 URLS=("http://localhost:8080/duck-clinic/" "http://localhost:8081/" "http://localhost:8082/")
 NAMES=("DuckClinic" "DuckInsurance" "Duck Physical Therapy Clinic")

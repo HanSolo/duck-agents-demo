@@ -15,6 +15,7 @@ duck-agents-demo/            <- this folder, given to sales (zip or git clone)
   llm.env.example            model template; the start script copies it to llm.env
   start/stop/reset-demo.command   macOS
   start/stop/reset-demo.bat       Windows
+  start/stop/reset-demo.sh        Linux (keep them executable: git update-index --chmod=+x *.sh)
 ```
 
 ## One-time setup
@@ -27,8 +28,8 @@ duck-agents-demo/            <- this folder, given to sales (zip or git clone)
    (GitHub > your profile or organisation > Packages > package > Package settings > Change visibility), or every laptop has to run
    `docker login ghcr.io` with a token that can read packages. Public is simpler; the images contain no keys, but they contain the demo's code.
    If the repositories are private and must stay so, keep the packages private and plan the login.
-4. **Set `.env`:** `DEMO_IMAGE_PREFIX=ghcr.io/<owner in lower case>`.
-5. **Test** on a clean Mac and a clean Windows laptop, ideally by someone who has not seen the demo.
+4. **Set `.env`:** `DEMO_IMAGE_PREFIX=ghcr.io/<owner>`. The start, stop and reset scripts lower-case it (image names must be lower case, GitHub names often are not). If you run `docker compose` by hand, write it in lower case yourself.
+5. **Test** on a clean Mac and a clean Windows laptop (and a Linux machine if anyone uses one), ideally by someone who has not seen the demo.
 
 To try it without published images: put the three application folders next to this folder and run
 `docker compose -f compose.yaml -f compose.build.yaml up -d --build` (no Java or Maven needed on the computer).
@@ -38,6 +39,10 @@ To try it without published images: put the three application folders next to th
 Inside the compose network they use the service names (`duck-clinic`, `duckinsurance`, `duckphysicaltherapyclinic`) instead of
 `host.docker.internal`, so only the browser ports are published, on localhost only: 8080 (clinic), 8081 (insurer), 8082 (therapy).
 The insurer's admin console (4848) is not published. The model is the only thing that may be on the host (`host.docker.internal`, for Ollama).
+
+## Demo switches
+
+`DUCK_ASSISTANT`, `DUCK_FRAUD_AGENT` and `DUCK_AGENTS_TAB` in `.env` set whether the three DuckInsurance switches start on or off (needs the insurance code of version 6). A restart of the demo goes back to these values.
 
 ## Things to decide or know
 
