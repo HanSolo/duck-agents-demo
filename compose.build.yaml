@@ -1,0 +1,15 @@
+# For the maintainer only: build the three images from the source folders next to this one instead of pulling them.
+#   docker compose -f compose.yaml -f compose.build.yaml up -d --build
+# Expects this layout (the folder names can be changed below):
+#   duck-agents-demo/            <- this folder
+#   duck-clinic-a2a/
+#   duckinsurance-a2a/
+#   duckphysicaltherapyclinic-a2a/
+# Java and Maven are not needed on the computer: the Dockerfiles build inside Docker.
+services:
+  duck-clinic:
+    build: ../duck-clinic-a2a
+  duckinsurance:
+    build: ../duckinsurance-a2a
+  duckphysicaltherapyclinic:
+    build: ../duckphysicaltherapyclinic-a2a

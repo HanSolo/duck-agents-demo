@@ -1,0 +1,54 @@
+# Duck agents demo: the three web applications in one place.
+# Started by start-demo.command (macOS) or start-demo.bat (Windows); by hand: docker compose up -d
+#
+# The language model of all three applications is set in llm.env (template: llm.env.example).
+# The image names come from .env (DEMO_IMAGE_PREFIX, DEMO_IMAGE_TAG), which the maintainer sets once.
+name: duck-agents-demo
+
+x-model: &model
+  env_file:
+    - path: llm.env
+      required: true
+  extra_hosts:
+    - "host.docker.internal:host-gateway"   # only needed when the model is an Ollama on this computer
+
+services:
+  duck-clinic:
+    <<: *model
+    image: ${DEMO_IMAGE_PREFIX:?set DEMO_IMAGE_PREFIX in .env}/duck-clinic:${DEMO_IMAGE_TAG:-salesdemo}
+    ports:
+      - "127.0.0.1:8080:8080"   # http://localhost:8080/duck-clinic/
+    environment:
+      THERAPY_MCP_URL: http://duckphysicaltherapyclinic:8082/mcp
+    restart: unless-stopped
+
+  duckinsurance:
+    <<: *model
+    image: ${DEMO_IMAGE_PREFIX:?set DEMO_IMAGE_PREFIX in .env}/duckinsurance:${DEMO_IMAGE_TAG:-salesdemo}
+    ports:
+      - "127.0.0.1:8081:8080"   # http://localhost:8081/
+    environment:
+      DUCKCLINIC_MCP_URL: http://duck-clinic:8080/duck-clinic/api/mcp
+      DUCKCLINIC_REST_URL: http://duck-clinic:8080/duck-clinic/api
+      PHYSIOCLINIC_MCP_URL: http://duckphysicaltherapyclinic:8082/mcp
+      PHYSIOCLINIC_REST_URL: http://duckphysicaltherapyclinic:8082/api
+      AGENT_SECRET: ${AGENT_SECRET:-duck-agent-demo}
+      DUCK_FRAUD_AGENT: "on"
+      DUCK_CONFIRM_WRITES: if-supported
+    restart: unless-stopped
+
+  duckphysicaltherapyclinic:
+    <<: *model
+    image: ${DEMO_IMAGE_PREFIX:?set DEMO_IMAGE_PREFIX in .env}/duckphysicaltherapyclinic:${DEMO_IMAGE_TAG:-salesdemo}
+    ports:
+      - "127.0.0.1:8082:8082"   # http://localhost:8082/
+    volumes:
+      - clinic-data:/data       # appointments survive a restart; reset-demo deletes them
+    environment:
+      INSURER_MCP_URL: http://duckinsurance:8080/api/mcp
+      DUCKCLINIC_MCP_URL: http://duck-clinic:8080/duck-clinic/api/mcp
+      AGENT_SECRET: ${AGENT_SECRET:-duck-agent-demo}
+    restart: unless-stopped
+
+volumes:
+  clinic-data:
