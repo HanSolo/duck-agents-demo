@@ -37,6 +37,8 @@ services:
       DUCK_ASSISTANT: ${DUCK_ASSISTANT:-on}
       DUCK_FRAUD_AGENT: ${DUCK_FRAUD_AGENT:-on}
       DUCK_AGENTS_TAB: ${DUCK_AGENTS_TAB:-on}
+      # off: the fraud agent judges after one model call and never asks for further checks (insurance version 7)
+      DUCK_FRAUD_INVESTIGATE: ${DUCK_FRAUD_INVESTIGATE:-on}
       DUCK_CONFIRM_WRITES: if-supported
     restart: unless-stopped
 

@@ -37,6 +37,28 @@ Click one to show or hide the Assistant, the fraud agent or the Agents page, for
 Start with all three off ("a normal Jakarta EE application"), then switch them on one after another.
 Whether they start on or off is set by the demo maintainer.
 
+A good order: **AI** (the Assistant answers questions about customers and claims), then **Fraud** (the agent checks claims, below), then **A2A** (the agents of the three organisations talk to each other).
+
+## Showing the fraud agent
+
+With **Fraud** on, go to **Claims**. Each open vet or physiotherapy claim has a **Check** button. Press it, wait 10 to 60 seconds, then press **Refresh**.
+The result is a risk score (0 = fine, 100 = very suspicious) and one line of explanation, for example "No clinic has a record near the incident. 6 signals · 3 checks".
+**Click that line** to open the details: the full reason, the patterns the software found ("signals"), and each extra check the agent asked for with what it found. Click it again to close it.
+
+The demo data contains three prepared cases. Check them in this order:
+
+| Claim | What you will see | What to say |
+|---|---|---|
+| **Waddles** (Marcus Webb), arthritis follow-up | Low score. One signal: the same duck had another claim a few weeks earlier. The vet clinic has both visits. | "A second claim alone is not fraud. The agent asked the clinic, found both visits and let it through." |
+| **Sir Quacksalot** (Anna Keller), "Fishing hook removal" (the claim with an amount of €1,750) | High score. The clinic has the surgery, but the same surgery was already claimed and paid, with an incident date one day earlier. | "Every document is real, but the bill was sent twice. A rule that only asks the clinic would have paid it again." |
+| **Admiral Beak** and **Puddles** (Samuel Okafor), "Emergency surgery after a fox attack" | High score, many signals: almost the same text for two ducks, policies only two weeks old, amounts close to the limit, an earlier rejected claim, and no clinic record. | "No single fact proves anything. The agent connects them, asks for more evidence (for example the owner's other claims and policies), and explains why it is suspicious. A person still decides." |
+
+Key message: "The software counts and compares, the AI weighs and explains, and every step it took is visible. It only reads data; approving or rejecting stays with the adjuster."
+
+With **A2A** on, the **Agents** page shows the same steps as a conversation log.
+Press **Check** on one claim at a time: each check asks the model twice, and a small model plan may otherwise hit its rate limit.
+If you already pressed Approve or Reject on one of these claims, use "Start over with fresh data" (above) before the next demo.
+
 ## If something goes wrong
 
 | What you see | What to do |
@@ -49,4 +71,6 @@ Whether they start on or off is set by the demo maintainer.
 | Linux: "permission denied" or "Your user may not use Docker yet" | Run `sudo usermod -aG docker $USER`, log out and in again, start again. |
 | Linux: `./start-demo.sh` says "Permission denied" | Run `chmod +x *.sh` once in this folder (unzipping can lose the executable flag). |
 | Linux with Ollama on the same computer: the agents cannot reach the model | Start Ollama so that containers can reach it: `OLLAMA_HOST=0.0.0.0 ollama serve` (or set `OLLAMA_HOST=0.0.0.0` in its systemd service). |
+| Under a fraud score there are no details to open | The demo was restarted since the last check. Press **Check** on the claim again. |
+| A fraud check ends with "Fraud agent failed" or stays at "checking" for minutes | The model is slow or busy. Wait a minute and press **Check** again, one claim at a time. |
 | Anything else | Send a screenshot of the black window (the terminal on Linux) to the demo maintainer. |
